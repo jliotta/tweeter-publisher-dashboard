@@ -3,7 +3,7 @@ const faker = require('faker');
 var users = new Set();
 var existingNames = {};
 
-while (users.size < 10000) {
+while (users.size < 1000) {
 	var name = faker.name.findName();
 	if (!existingNames[name]) {
 		existingNames[name] = true;
