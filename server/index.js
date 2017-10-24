@@ -16,19 +16,28 @@ sqs.receiveMessage(params, function(err, data) {
 	if (err) {
 		console.log('Receive Error:', err);
 	} else {
-		console.log('Receive Success:', data.Messages[0]);
-		var deleteParams = {
-			QueueUrl: queueUrl,
-			ReceiptHandle: data.Messages[0].ReceiptHandle
-		};
-		sqs.deleteMessage(deleteParams, function(err, data) {
-			if (err) {
-				console.log('Delete Error:', err);
-			} else {
-				console.log('Message Deleted:', data);
-			}
-		});
+		if (data.Messages) {
+			console.log('Receive Success:', data.Messages[0].Body);
+			console.log('Message Type:', typeof data.Messages[0].Body);
+			var deleteParams = {
+				QueueUrl: queueUrl,
+				ReceiptHandle: data.Messages[0].ReceiptHandle
+			};
+			sqs.deleteMessage(deleteParams, function(err, data) {
+				if (err) {
+					console.log('Delete Error:', err);
+				} else {
+					console.log('Message Deleted:', data);
+				}
+			});
+		} else {
+			console.log('Queue is empty');
+		}
 	}
+});
+
+app.get('/', (req, res) => {
+	res.send(JSON.stringify({}));
 });
 
 
