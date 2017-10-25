@@ -1,17 +1,15 @@
-const Sequelize = require('sequelize');
+const sequelize = require('./sequelize');
+const User = require('./models/user.js');
+const userData = require('../data/sampleDataGenerator.js');
 
-const sequelize = new Sequelize('publisher_dashboard', 'tweeter', 'YGhhbv6', {
-	host: 'localhost',
-	dialect: 'postgres'
-});
-
-sequelize
-	.authenticate()
+sequelize.sync()
 	.then(() => {
-		console.log('Connection has been successfully established');
-	})
-	.catch((err) => {
-		console.error('Unable to connect to the database:', err);
+		userData.forEach(user => {
+			User.create({
+				name: user[0],
+				handle: user[1],
+				timezone: user[2],
+				publisher: user[3]
+			});
+		});
 	});
-
-	module.exports = sequelize;
