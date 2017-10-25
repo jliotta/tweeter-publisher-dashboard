@@ -3,10 +3,10 @@ const csv = require('fast-csv');
 const fs = require('file-system');
 const ws = fs.createWriteStream('userData.csv');
 
-var users = new Set();
+var users = [];
 var existingNames = {};
 
-while (users.size < 1000) {
+while (users.length < 500000) {
 	var name = faker.name.findName();
 	if (!existingNames[name]) {
 		existingNames[name] = true;
@@ -23,16 +23,11 @@ while (users.size < 1000) {
 			publisher: publisher
 		};
 
-		users.add(user);
+		users.push(user);
 	}
 }
 
-var userData = [];
+csv.write(users, {headers:false}).pipe(ws);
 
-for (var item of users) {
-	userData.push([item.name, item.handle, item.timezone, item.publisher]);
-}
+module.exports = users;
 
-csv.write(userData, {headers:true}).pipe(ws);
-
-module.exports = userData;
