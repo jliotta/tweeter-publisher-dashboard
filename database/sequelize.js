@@ -1,9 +1,16 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize('publisher_dashboard', 'tweeter', 'YGhhbv6', {
-	host: 'localhost',
-	dialect: 'postgres'
-});
+var config = {
+	"define": {
+    "createdAt": "createdat",
+    "timestamps": false,
+    "userId": "userid"
+  },
+  "host": "localhost",
+	"dialect": "postgres"
+}
+
+const sequelize = new Sequelize('publisher_dashboard', 'tweeter', 'YGhhbv6', config);
 
 sequelize
 	.authenticate()
