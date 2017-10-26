@@ -28,4 +28,6 @@ const Tweet = sequelize.define('tweet', {
 	}
 });
 
-Tweet.sync({force: true});
+// Tweet.sync({force: true});
+
+module.exports = Tweet;

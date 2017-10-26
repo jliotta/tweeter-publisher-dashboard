@@ -2,6 +2,7 @@ const faker = require('faker');
 const csv = require('fast-csv');
 const fs = require('file-system');
 const ws = fs.createWriteStream('tweetData3.csv');
+const publishers = require('./publishers.js');
 
 var messageGenerator = function() {
 	var randomElement = function(array){
@@ -27,36 +28,51 @@ var messageGenerator = function() {
 
 }
 
+var numberGenerator = function(n) {
+	return Math.floor(Math.random() * n);
+};
+
 var dateGenerator = function() {
 	var months = [9, 8, 7];
-	var randomMonth = months[Math.floor(Math.random() * months.length)];
-	var randomDay = Math.floor(Math.random() * 31);
-	var randomHour = Math.floor(Math.random() * 24);
-	var randomMinute = Math.floor(Math.random() * 60);
-	var randomSecond = Math.floor(Math.random() * 60);
+	var randomMonth = months[numberGenerator(months.length)];
+	var randomDay = numberGenerator(31);
+	var randomHour = numberGenerator(24);
+	var randomMinute = numberGenerator(60);
+	var randomSecond = numberGenerator(60);
 
-	var date = new Date(2017, randomMonth, randomDay, randomHour, randomMinute, randomSecond);
-	return date.toString().split(' ').slice(0, 5).join(' ');
-}
+	var d = new Date(2017, randomMonth, randomDay, randomHour, randomMinute, randomSecond);
+	return d.toString();
+};
 
-var metricsGenerator = function(n) {
-	return Math.floor(Math.random() * n);
+var userGenerator = function() {
+	// This function ensures that publishers are much more likely to tweet than regular users
+	var user;
+	var randomNumber = numberGenerator(100);
+
+	if (randomNumber <= 7) {
+		var randomIndex = numberGenerator(publishers.length);
+    user = publishers[randomIndex];
+	} else {
+		user = numberGenerator(500000);
+	}
+	return user;
 }
 
 var tweets = [];
 
-while (tweets.length < 1000000) {
+while (tweets.length < 2500000) {
 	var tweet = {
-		userId: metricsGenerator(500000),
+		userId: userGenerator(),
 		message: messageGenerator(),
 		createdAt: dateGenerator(),
-		impressions: metricsGenerator(50000000),
-		views: metricsGenerator(500000),
-		likes: metricsGenerator(500000),
-		replies: metricsGenerator(10000),
-		retweets: metricsGenerator(50000)
+		impressions: numberGenerator(50000000),
+		views: numberGenerator(500000),
+		likes: numberGenerator(500000),
+		replies: numberGenerator(10000),
+		retweets: numberGenerator(50000)
 	}
 	tweets.push(tweet);
 }
 
+// module.exports = tweets;
 csv.write(tweets, {headers:false}).pipe(ws);

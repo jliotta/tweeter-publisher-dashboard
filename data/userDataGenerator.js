@@ -14,7 +14,7 @@ while (users.length < 500000) {
 		var timezone = 'PST';
 
 		var probability = Math.random();
-		var publisher = probability < 0.05 ? true : false;
+		var publisher = probability < 0.001 ? true : false;
 		
 		var user = {
 			name: name,
@@ -26,5 +26,7 @@ while (users.length < 500000) {
 		users.push(user);
 	}
 }
+
+// module.exports = users;
 
 csv.write(users, {headers:false}).pipe(ws);
