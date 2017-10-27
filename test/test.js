@@ -3,6 +3,8 @@ const expect = require('chai').expect;
 const request = require('request');
 const AWS = require('aws-sdk');
 const users = require('../data/sampleUserData.js');
+const tweets = require('../data/sampleTweetData.js');
+const publishers = require('../data/publishers.js');
 
 AWS.config.loadFromPath('./config.json');
 
@@ -36,9 +38,9 @@ describe('Server', () => {
 
 describe('Sample Data Generator', () => {
 	describe('User Data', () => {
-		const publishers = users.filter(user => user.publisher === true).length;
+		const pubs = users.filter(user => user.publisher === true).length;
 
-		it('should return users in object form', () => {
+		it('should return users as objects', () => {
 			var allObjects = users.every(user => typeof user === 'object');
 			expect(allObjects).to.be.true;
 		});
@@ -57,10 +59,33 @@ describe('Sample Data Generator', () => {
 			expect(uniques.size).to.equal(users.length);
 		});
 		it('should make some users publishers', () => {
-			expect(publishers).to.be.above(0);
+			expect(pubs).to.be.above(0);
 		});
-		it('should have more non-publishers than publishers', () => {
-			expect(users.length - publishers).to.be.above(publishers);
+		it('should have more non-pubslishers than publishers', () => {
+			expect(users.length - pubs).to.be.above(pubs);
+		});
+	});
+	describe('Tweet Data', () => {
+		it('should return tweets as objects', () => {
+			var allObjects = tweets.every(tweet => typeof tweet === 'object');
+			expect(allObjects).to.be.true;
+		});
+		it('should only produce tweets from August - October 2017', () => {
+			var validMonths = tweets.some(tweet => tweet.createdAt.includes('Jan') 
+				|| tweet.createdAt.includes('Feb') 
+				|| tweet.createdAt.includes('Mar')
+				|| tweet.createdAt.includes('Apr')
+				|| tweet.createdAt.includes('May')
+				|| tweet.createdAt.includes('Jun')
+				|| tweet.createdAt.includes('Jul')
+				|| tweet.createdAt.includes('Nov')
+				|| tweet.createdAt.includes('Dec'));
+			expect(validMonths).to.be.false;
+		});
+		it('should have publisher accounts tweet more than non-publisher accounts', () => {
+			var publisherTweets = tweets.filter(tweet => publishers.indexOf(tweet.userId) >= 0).length;
+			var userTweets = tweets.length - publisherTweets;
+			expect(publisherTweets / publishers.length).to.be.above(userTweets / users.length - publishers.length);
 		});
 	});
 });

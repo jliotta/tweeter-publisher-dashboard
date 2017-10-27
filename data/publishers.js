@@ -1,4 +1,4 @@
-// These user ids are pulled from the database after they were added manually
+// These user ids were pulled from the database after they were added manually
 
 var publishers = [
 	`1967
