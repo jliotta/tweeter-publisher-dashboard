@@ -1,46 +1,58 @@
-const express = require('express');
-const app = express();
 const AWS = require('aws-sdk');
+const db = require('./dbQueries.js');
+const formatMetric = require('./helpers.js').formatMetric;
+const formatTweet = require('./helpers.js').formatTweet;
+const bulkStorage = require('./bulkStorage.js');
 
 AWS.config.loadFromPath('./config.json');
 
 const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
-
 const queueUrl = 'https://sqs.us-west-1.amazonaws.com/748557891852/Testing';
 
 const params = {
-	QueueUrl: queueUrl
+  QueueUrl: queueUrl,
+  MaxNumberOfMessages: 10,
+  MessageAttributeNames: ['All']
 };
 
-sqs.receiveMessage(params, function(err, data) {
-	if (err) {
-		console.log('Receive Error:', err);
-	} else {
-		if (data.Messages) {
-			console.log('Receive Success:', data.Messages[0].Body);
-			console.log('Message Type:', typeof data.Messages[0].Body);
-			var deleteParams = {
-				QueueUrl: queueUrl,
-				ReceiptHandle: data.Messages[0].ReceiptHandle
-			};
-			sqs.deleteMessage(deleteParams, function(err, data) {
-				if (err) {
-					console.log('Delete Error:', err);
-				} else {
-					console.log('Message Deleted:', data);
-				}
-			});
-		} else {
-			console.log('Queue is empty');
-		}
-	}
-});
+var pollQueue = () => {
+  sqs.receiveMessage(params, (err, data) => {
+    if (err) {
+      console.log('Receive Error:', err);
+    } else {
+      if (data.Messages) {
+        data.Messages.forEach(message => {
+          const deleteParams = {
+            QueueUrl: queueUrl, 
+            ReceiptHandle: message.ReceiptHandle
+          };
+          sqs.deleteMessage(deleteParams, (err, data) => {
+            if (err) {
+              console.log('Delete Error:', err);
+            } else {
+              var type = message.MessageAttributes.type.StringValue;
+              if (type === 'original' || type === 'retweet' || type === 'reply') {
+                bulkStorage['tweet'].push(formatTweet(message));
+              };
+    
+              if (type !== 'original') {
+                bulkStorage[type].push(formatMetric(message));
+                db[type](message.MessageAttributes.tweetId.StringValue);
 
-app.get('/', (req, res) => {
-	res.send(JSON.stringify({}));
-});
+                if (bulkStorage[type].length === 100) {
+                  var tweets = bulkStorage['tweet'];
+                  var items = bulkStorage[type];
+                  bulkStorage['tweets'] = [];
+                  bulkStorage[type] = [];
+                  db.bulkCreate(type, tweets, items);
+                }
+              };
+            }
+          })
+        })
+      }
+    };
+  }) 
+};
 
-
-app.listen(3000, () => {
-	console.log('server is listening on port 3000');
-});
+setInterval(pollQueue, 10);
