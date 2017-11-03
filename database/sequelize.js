@@ -2,12 +2,16 @@ const Sequelize = require('sequelize');
 
 var config = {
 	"define": {
-    "createdAt": "createdat",
-    "timestamps": false,
-    "userId": "userid"
+    "timestamps": false
   },
   "host": "localhost",
-	"dialect": "postgres"
+  "dialect": "postgres",
+  "pool": {
+    max: 30,
+    min: 0,
+    idle: 20000,
+    acquire: 20000
+  }
 }
 
 const sequelize = new Sequelize('publisher_dashboard', 'tweeter', 'YGhhbv6', config);

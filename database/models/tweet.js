@@ -2,13 +2,18 @@ const Sequelize = require('sequelize');
 const sequelize = require('../sequelize.js');
 
 const Tweet = sequelize.define('tweet', {
-	user_id: {
+  tweetId: {
+  type: Sequelize.STRING,
+  unique: true,
+  primaryKey: true
+  },
+	userId: {
 		type: Sequelize.INTEGER
 	},
 	message: {
 		type: Sequelize.STRING
 	},
-	created_at: {
+	createdAt: {
 		type: Sequelize.STRING
 	},
 	impressions: {
@@ -25,7 +30,10 @@ const Tweet = sequelize.define('tweet', {
 	},
 	retweets: {
 		type: Sequelize.INTEGER
-	}
+  },
+  type: {
+    type: Sequelize.STRING
+  }
 });
 
 // Tweet.sync({force: true});
