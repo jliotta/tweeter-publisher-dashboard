@@ -2,10 +2,10 @@ const Sequelize = require('sequelize');
 const sequelize = require('../sequelize.js');
 
 const Retweet = sequelize.define('retweet', {
-  tweetId: {
+  tweet_id: {
     type: Sequelize.STRING
   },
-  parentId: {
+  parent_id: {
     type: Sequelize.STRING
   }
 });
