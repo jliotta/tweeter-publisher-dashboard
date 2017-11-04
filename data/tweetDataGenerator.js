@@ -38,42 +38,48 @@ var numberGenerator = function(n) {
 
 var dateGenerator = function() {
   // Only produce dates from August - October 2017
-  return Math.floor(Math.random() * (1509519599000 - 1501570800000) + 1501570800000).toString();
+  return Math.floor(Math.random() * (1509519599001 - 1501570800000) + 1501570800000).toString();
 };
 
 var userGenerator = function() {
 	// This function ensures that publishers are much more likely to tweet than regular users
-	var user;
-	var randomNumber = numberGenerator(100);
+	// var user;
+	// var randomNumber = numberGenerator(100);
 
-	if (randomNumber <= 7) {
-    user = numberGenerator(200000) + 1;
-	} else {
-		user = numberGenerator(700000);
-		while (user === 0) {
-			user = numberGenerator(700000);
-		}
-	}
+	// if (randomNumber <= 70) {
+  //   user = numberGenerator(2000) + 1;
+	// } else {
+	// 	user = numberGenerator(700000);
+	// 	while (user === 0) {
+	// 		user = numberGenerator(700000);
+	// 	}
+  // }
+  
+  user = numberGenerator(2001);
+  while (user === 0) {
+    user = numberGenerator(2001);
+  }
 	return user;
 };
 
 var tweetGenerator = function() {
-  var impressions = numberGenerator(1000000);
-  var views = Math.floor((impressions / 10) * Math.random());
-  var likes = Math.floor((impressions / 8) * Math.random());
-  var replies = Math.floor((impressions / 500) * Math.random());
-  var retweets = Math.floor((impressions / 250) * Math.random());
+  // var impressions = numberGenerator(1000000);
+  // var views = Math.floor((impressions / 10) * Math.random());
+  // var likes = Math.floor((impressions / 8) * Math.random());
+  // var replies = Math.floor((impressions / 500) * Math.random());
+  // var retweets = Math.floor((impressions / 250) * Math.random());
 
   var tweet = {
-    tweetId: uuidv4().toString(),
-    userId: userGenerator().toString(),
+    tweet_id: uuidv4().toString(),
+    user_id: userGenerator().toString(),
     message: messageGenerator(),
-    createdAt: dateGenerator(),
-    impressions: impressions,
-    views: views,
-    likes: likes,
-    replies: replies,
-    retweets: retweets,
+    created_at: dateGenerator(),
+    updated_at: new Date().valueOf() / 10000000,
+    impressions: 0,
+    views: 0,
+    likes: 0,
+    replies: 0,
+    retweets: 0,
     type: 'original'
   };
   tweets.push(tweet);
@@ -81,7 +87,7 @@ var tweetGenerator = function() {
 
 var count = 0;
 
-while (count < 50000) {
+while (count < 1000000) {
   tweetGenerator();
   count++;
 }
