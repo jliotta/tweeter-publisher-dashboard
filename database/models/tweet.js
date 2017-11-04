@@ -17,7 +17,7 @@ const Tweet = sequelize.define('tweet', {
 		type: Sequelize.STRING
   },
   updated_at: {
-    type: Sequelize.STRING
+    type: Sequelize.DECIMAL
   },
 	impressions: {
 		type: Sequelize.INTEGER

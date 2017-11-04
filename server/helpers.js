@@ -1,23 +1,24 @@
 const helpers = {
   formatMetric: (message) => {
     var type = message.MessageAttributes.type.StringValue;
-    var userId = message.MessageAttributes.userId.StringValue;
-    var tweetId = message.MessageAttributes.tweetId.StringValue;
+    var user_id = message.MessageAttributes.user_id.StringValue;
+    var tweet_id = message.MessageAttributes.tweet_id.StringValue;
     var content = message.Body;
     var id = message.MessageAttributes.id && message.MessageAttributes.id.StringValue;
   
     if (type === 'impression' || type === 'view' || type === 'like') {
-      return {userId: userId, tweetId: tweetId};
+      return {user_id: user_id, tweet_id: tweet_id};
     } else if (type === 'reply' || type === 'retweet') {
-      return {tweetId: id, parentId: tweetId};
+      return {tweet_id: id, parentId: tweet_id};
     }  
   },
   formatTweet: (message) => {
     return {
-      tweetId: message.MessageAttributes.id.StringValue,
-      userId: message.MessageAttributes.userId.StringValue,
+      tweet_id: message.MessageAttributes.id.StringValue,
+      user_id: message.MessageAttributes.user_id.StringValue,
       message: '',
-      createdAt: new Date().valueOf().toString(),
+      created_at: new Date().valueOf().toString(),
+      updated_at: new Date().valueOf() / 10000000,
       impressions: 0,
       views: 0,
       likes: 0,

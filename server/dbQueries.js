@@ -8,20 +8,20 @@ const View = require('../database/models/view.js');
 const Like = require('../database/models/like.js');
 
 const queries = {
-  impression: (tweetId) => {
-    sequelize.query('UPDATE "tweets" SET "impressions"="impressions"+ 1 WHERE "tweetId" = ?', {replacements: [tweetId]})
+  impression: (tweet_id) => {
+    sequelize.query('UPDATE "tweets" SET "impressions"="impressions"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
   },
-  view: (tweetId) => {
-    sequelize.query('UPDATE "tweets" SET "views"="views"+ 1 WHERE "tweetId" = ?', {replacements: [tweetId]})
+  view: (tweet_id) => {
+    sequelize.query('UPDATE "tweets" SET "views"="views"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
   },
-  like: (tweetId) => {
-    sequelize.query('UPDATE "tweets" SET "views"="views"+ 1 WHERE "tweetId" = ?', {replacements: [tweetId]})
+  like: (tweet_id) => {
+    sequelize.query('UPDATE "tweets" SET "likes"="likes"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
   },
-  reply: (tweetId) => {
-    sequelize.query('UPDATE "tweets" SET "replies"="replies"+ 1 WHERE "tweetId" = ?', {replacements: [tweetId]})
+  reply: (tweet_id) => {
+    sequelize.query('UPDATE "tweets" SET "replies"="replies"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
   },
-  retweet: (tweetId) => {
-    sequelize.query('UPDATE "tweets" SET "retweets"="retweets"+ 1 WHERE "tweetId" = ?', {replacements: [tweetId]})
+  retweet: (tweet_id) => {
+    sequelize.query('UPDATE "tweets" SET "retweets"="retweets"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
   },
   bulkCreate: (type, tweets, items) => {
     if (type === 'impression') {
