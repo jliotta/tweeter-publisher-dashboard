@@ -7,21 +7,21 @@ const Impression = require('./models/impression.js');
 const View = require('./models/view.js');
 const Like = require('./models/like.js');
 
-Tweet.belongsTo(User, {foreignKey: 'userId', constraints: false});
+Tweet.belongsTo(User, {foreignKey: 'user_id'});
 
-Retweet.belongsTo(Tweet, {foreignKey: 'tweetId', constraints: false});
-Retweet.belongsTo(Tweet, {foreignKey: 'parentId', constraints: false});
+Retweet.belongsTo(Tweet, {foreignKey: 'tweet_id'});
+Retweet.belongsTo(Tweet, {foreignKey: 'parent_id'});
 
-Reply.belongsTo(Tweet, {foreignKey: 'tweetId', constraints: false});
-Reply.belongsTo(Tweet, {foreignKey: 'parentId', constraints: false});
+Reply.belongsTo(Tweet, {foreignKey: 'tweet_id'});
+Reply.belongsTo(Tweet, {foreignKey: 'parent_id'});
 
-Impression.belongsTo(User, {foreignKey: 'userId', constraints: false});
-Impression.belongsTo(Tweet, {foreignKey: 'tweetId', constraints: false});
+Impression.belongsTo(User, {foreignKey: 'user_id'});
+Impression.belongsTo(Tweet, {foreignKey: 'tweet_id'});
 
-View.belongsTo(User, {foreignKey: 'userId', constraints: false});
-View.belongsTo(Tweet, {foreignKey: 'tweetId', constraints: false});
+View.belongsTo(User, {foreignKey: 'user_id'});
+View.belongsTo(Tweet, {foreignKey: 'tweet_id'});
 
-Like.belongsTo(User, {foreignKey: 'userId', constraints: false});
-Like.belongsTo(Tweet, {foreignKey: 'tweetId', constraints: false});
+Like.belongsTo(User, {foreignKey: 'user_id'});
+Like.belongsTo(Tweet, {foreignKey: 'tweet_id'});
 
-sequelize.sync();
+sequelize.sync({force: true});
