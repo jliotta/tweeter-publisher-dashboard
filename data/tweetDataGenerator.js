@@ -1,17 +1,9 @@
-const AWS = require('aws-sdk');
 const faker = require('faker');
 const grammar = require('./grammar.js');
 const uuidv4 = require('uuid/v4');
 const csv = require('fast-csv');
 const fs = require('file-system');
 const ws = fs.createWriteStream('tweets.csv');
-
-const tweetIds = require('./tweets.js');
-
-AWS.config.loadFromPath('./config.json');
-
-const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
-const queueUrl = 'https://sqs.us-west-1.amazonaws.com/748557891852/Testing';
 
 var tweets = [];
 
@@ -43,17 +35,17 @@ var dateGenerator = function() {
 
 var userGenerator = function() {
 	// This function ensures that publishers are much more likely to tweet than regular users
-	// var user;
-	// var randomNumber = numberGenerator(100);
+	var user;
+	var randomNumber = numberGenerator(100);
 
-	// if (randomNumber <= 70) {
-  //   user = numberGenerator(2000) + 1;
-	// } else {
-	// 	user = numberGenerator(700000);
-	// 	while (user === 0) {
-	// 		user = numberGenerator(700000);
-	// 	}
-  // }
+	if (randomNumber <= 70) {
+    user = numberGenerator(2000) + 1;
+	} else {
+		user = numberGenerator(700000);
+		while (user === 0) {
+			user = numberGenerator(700000);
+		}
+  }
   
   user = numberGenerator(2001);
   while (user === 0) {
@@ -63,31 +55,32 @@ var userGenerator = function() {
 };
 
 var tweetGenerator = function() {
-  // var impressions = numberGenerator(1000000);
-  // var views = Math.floor((impressions / 10) * Math.random());
-  // var likes = Math.floor((impressions / 8) * Math.random());
-  // var replies = Math.floor((impressions / 500) * Math.random());
-  // var retweets = Math.floor((impressions / 250) * Math.random());
+  var impressions = numberGenerator(1000000);
+  var views = Math.floor((impressions / 10) * Math.random());
+  var likes = Math.floor((impressions / 8) * Math.random());
+  var replies = Math.floor((impressions / 500) * Math.random());
+  var retweets = Math.floor((impressions / 250) * Math.random());
 
   var tweet = {
     tweet_id: uuidv4().toString(),
-    user_id: userGenerator().toString(),
+    user_id: (1).toString(),
     message: messageGenerator(),
     created_at: dateGenerator(),
     updated_at: new Date().valueOf() / 10000000,
-    impressions: 0,
-    views: 0,
-    likes: 0,
-    replies: 0,
-    retweets: 0,
-    type: 'original'
+    impressions: impressions,
+    views: views,
+    likes: likes,
+    replies: replies,
+    retweets: retweets,
+    type: 'original',
+    parent_id: null
   };
   tweets.push(tweet);
 }
 
 var count = 0;
 
-while (count < 1000000) {
+while (count < 500) {
   tweetGenerator();
   count++;
 }
