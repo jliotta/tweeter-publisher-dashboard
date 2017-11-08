@@ -6,14 +6,10 @@ const helpers = {
     var content = message.Body;
     var id = message.MessageAttributes.id && message.MessageAttributes.id.StringValue;
   
-    if (type === 'impression' || type === 'view' || type === 'like') {
-      return {user_id: user_id, tweet_id: tweet_id};
-    } else if (type === 'reply' || type === 'retweet') {
-      return {tweet_id: id, parentId: tweet_id};
-    }  
+    return {user_id: user_id, tweet_id: tweet_id};
   },
   formatTweet: (message) => {
-    return {
+    var tweet = {
       tweet_id: message.MessageAttributes.id.StringValue,
       user_id: message.MessageAttributes.user_id.StringValue,
       message: '',
@@ -25,7 +21,11 @@ const helpers = {
       replies: 0,
       retweets: 0,
       type: message.MessageAttributes.type.StringValue
+    };
+    if (tweet.type === 'reply' || tweet.type === 'retweet') {
+      tweet.parent_id =  message.MessageAttributes.tweet_id.StringValue;
     }
+    return tweet;
   }
 }
 

@@ -8,20 +8,30 @@ const View = require('../database/models/view.js');
 const Like = require('../database/models/like.js');
 
 const queries = {
-  impression: (tweet_id) => {
-    sequelize.query('UPDATE "tweets" SET "impressions"="impressions"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
+  impression: (ids) => {
+    for (var i = 0; i < ids.length; i++) {
+      sequelize.query('UPDATE "tweets" SET "impressions"="impressions"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, ids[i]]})      
+    }
   },
-  view: (tweet_id) => {
-    sequelize.query('UPDATE "tweets" SET "views"="views"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
+  view: (ids) => {
+    for (var i = 0; i < ids.length; i++) {
+      sequelize.query('UPDATE "tweets" SET "views"="views"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, ids[i]]})      
+    }
   },
-  like: (tweet_id) => {
-    sequelize.query('UPDATE "tweets" SET "likes"="likes"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
+  like: (ids) => {
+    for (var i = 0; i < ids.length; i++) {
+      sequelize.query('UPDATE "tweets" SET "likes"="likes"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, ids[i]]})      
+    }
   },
-  reply: (tweet_id) => {
-    sequelize.query('UPDATE "tweets" SET "replies"="replies"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
+  reply: (ids) => {
+    for (var i = 0; i < ids.length; i++) {
+      sequelize.query('UPDATE "tweets" SET "replies"="replies"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, ids[i]]})      
+    }
   },
-  retweet: (tweet_id) => {
-    sequelize.query('UPDATE "tweets" SET "retweets"="retweets"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, tweet_id]})
+  retweet: (ids) => {
+    for (var i = 0; i < ids.length; i++) {
+      sequelize.query('UPDATE "tweets" SET "retweets"="retweets"+ 1, "updated_at" = ? WHERE "tweet_id" = ?', {replacements: [new Date().valueOf() / 10000000, ids[i]]})      
+    }
   },
   bulkCreate: (type, tweets, items) => {
     if (type === 'impression') {
@@ -36,15 +46,7 @@ const queries = {
       Tweet.bulkCreate(tweets)
       .then(() => Like.bulkCreate(items))
       .catch(err => console.log('Like Error:', err));
-    } else if (type === 'reply') {
-      Tweet.bulkCreate(tweets)
-      .then(() => Reply.bulkCreate(items))
-      .catch(err => console.log('Reply Error:', err));
-    } else if (type === 'retweet') {
-      Tweet.bulkCreate(tweets)
-      .then(() => Retweet.bulkCreate(items))
-      .catch(err => console.log('Retweet Error:', err));
-    } 
+    }
   },
   getTodaysTweets: async (day) => {
     return new Promise((resolve, reject) => {
