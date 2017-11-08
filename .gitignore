@@ -4,6 +4,7 @@ config/production.json
 config/staging.json
 config/test.json
 config.json
+config.js
 
 # Generated Sample Data
 tweetData.csv 
