@@ -5,6 +5,8 @@ config/staging.json
 config/test.json
 config.json
 config.js
+Dockerfile
+.vscode/
 
 # Generated Sample Data
 tweetData.csv 
