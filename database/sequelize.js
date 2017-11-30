@@ -9,8 +9,8 @@ var config = {
   "pool": {
     max: 30,
     min: 0,
-    idle: 20000,
-    acquire: 20000
+    idle: 600000,
+    acquire: 600000
   }
 }
 

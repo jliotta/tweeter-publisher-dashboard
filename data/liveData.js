@@ -52,7 +52,7 @@ var metricsGenerator = function() {
       },
       type: {
         DataType: 'String',
-        StringValue: randomElement(['impression', 'view', 'like', 'reply', 'retweet'])
+        StringValue: randomElement(['impression', 'view', 'like', 'reply', 'retweet', 'original'])
       }
     },
     MessageBody: 'Metric',
@@ -92,7 +92,7 @@ var metricsGenerator = function() {
 // setInterval(metricsGenerator, 10);
 
 var count = 0;
-while (count < 10000) {
+while (count < 100000) {
   metricsGenerator();
   count++;
 }

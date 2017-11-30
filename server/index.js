@@ -1,17 +1,13 @@
 const AWS = require('aws-sdk');
 const cluster = require('cluster');
-const Cron = require('cron').CronJob;
 const db = require('./dbQueries.js');
-const formatMetric = require('./helpers.js').formatMetric;
-const formatTweet = require('./helpers.js').formatTweet;
-const bulkStorage = require('./bulkStorage.js');
+const {formatMetric, formatTweet} = require('./helpers.js');
+const sendTweets = require('./worker.js');
+const {tableEntries, metrics} = require('./bulkStorage.js');
 
 AWS.config.loadFromPath('./config.json');
-
 const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 const queueUrl = require('../config.js').url;
-const sendUrl = require('../config.js').sendUrl;
-
 const params = {
   QueueUrl: queueUrl,
   MaxNumberOfMessages: 10,
@@ -34,51 +30,40 @@ var pollQueue = () => {
               console.log('Delete Error:', err);
             } else {
               var type = message.MessageAttributes.type.StringValue;
+
               if (type === 'original' || type === 'retweet' || type === 'reply') {
-                bulkStorage['tweet'].push(formatTweet(message));
+                tableEntries['tweet'].push(formatTweet(message));
               };
     
-              if (type !== 'original') {
-                bulkStorage[type].push(formatMetric(message));
-                db[type](message.MessageAttributes.tweet_id.StringValue);
+              if (type !== 'original' && type !== 'reply' && type !== 'retweet') {
+                tableEntries[type].push(formatMetric(message));
+                metrics[type].push(message.MessageAttributes.tweet_id.StringValue);
 
-                if (bulkStorage[type].length === 1500) {
-                  var tweets = bulkStorage['tweet'];
-                  var items = bulkStorage[type];
-                  bulkStorage['tweets'] = [];
-                  bulkStorage[type] = [];
+                if (tableEntries[type].length === 5000) {
+                  var tweets = tableEntries['tweet'];
+                  var items = tableEntries[type];
+                  tableEntries['tweets'] = [];
+                  tableEntries[type] = [];
                   db.bulkCreate(type, tweets, items);
                 }
+
+                if (metrics[type].length === 2500) {
+                  var ids = metrics[type];
+                  metrics[type] = [];
+                  db[type](ids);
+                } 
               };
             }
           })
         })
-      }
+      } 
     };
-  }) 
+  })    
 };
 
-var sendTweets = new Cron('0 0 * * *', () => {
-  var today = new Date().valueOf();
-  var pastDay = today - 86400000;
-
-  db['getTodaysTweets'](pastDay)
-  .then(results => {
-    results[0].forEach(tweet => {
-      sqs.sendMessage({MessageBody: JSON.stringify(tweet), QueueUrl: sendUrl}, (err, data) => {
-        if (err) {
-          console.log('Sending Error:', err);
-        } else {
-          console.log('Sent Message:', data);
-        }
-      });
-    });
-  });
-});
-
+// Spin up a cluster of three node servers
 if (cluster.isMaster) {
-  var numWorkers = require('os').cpus().length;
-  for (var i = 0; i < numWorkers; i++) {
+  for (var i = 0; i < 3; i++) {
     cluster.fork();
   }
   cluster.on('online', (worker) => {
@@ -89,7 +74,9 @@ if (cluster.isMaster) {
     console.log('Starting a new worker');
     cluster.fork();
   });
+  // Start the cron worker which sends updated tweets to queue every day
   sendTweets.start();
 } else {
+  // Have the workers poll the queue and process messages
   setInterval(pollQueue, 10);
 }

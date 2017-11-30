@@ -1,17 +1,9 @@
-const AWS = require('aws-sdk');
 const faker = require('faker');
 const grammar = require('./grammar.js');
 const uuidv4 = require('uuid/v4');
 const csv = require('fast-csv');
 const fs = require('file-system');
 const ws = fs.createWriteStream('tweets.csv');
-
-const tweetIds = require('./tweets.js');
-
-AWS.config.loadFromPath('./config.json');
-
-const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
-const queueUrl = 'https://sqs.us-west-1.amazonaws.com/748557891852/Testing';
 
 var tweets = [];
 
@@ -71,7 +63,7 @@ var tweetGenerator = function() {
 
   var tweet = {
     tweet_id: uuidv4().toString(),
-    user_id: userGenerator().toString(),
+    user_id: (1).toString(),
     message: messageGenerator(),
     created_at: dateGenerator(),
     updated_at: new Date().valueOf() / 10000000,
@@ -80,14 +72,15 @@ var tweetGenerator = function() {
     likes: 0,
     replies: 0,
     retweets: 0,
-    type: 'original'
+    type: 'original',
+    parent_id: null
   };
   tweets.push(tweet);
 }
 
 var count = 0;
 
-while (count < 1000000) {
+while (count < 500) {
   tweetGenerator();
   count++;
 }

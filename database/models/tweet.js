@@ -36,6 +36,11 @@ const Tweet = sequelize.define('tweet', {
   },
   type: {
     type: Sequelize.STRING
+  },
+  parent_id: {
+    type: Sequelize.STRING,
+    allowNull: true,
+    defaultValue: null
   }
 });
 
