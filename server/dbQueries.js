@@ -45,6 +45,14 @@ const queries = {
       .then(() => Retweet.bulkCreate(items))
       .catch(err => console.log('Retweet Error:', err));
     } 
+  },
+  getTodaysTweets: async (day) => {
+    return new Promise((resolve, reject) => {
+      sequelize.query('SELECT * from tweets WHERE "updated_at" > ?', {replacements: [day / 10000000]})
+        .then(result => {
+          resolve(result);
+        });
+    });
   }
 }
 
