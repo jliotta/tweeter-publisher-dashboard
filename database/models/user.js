@@ -21,22 +21,22 @@ const User = sequelize.define('user', {
   activeTime: {
     type: Sequelize.STRING
   },
-  impressionProb: {
+  impression_prob: {
     type: Sequelize.STRING
   },
-  impressionProbInactive: {
+  impression_prob_inactive: {
     type: Sequelize.STRING
   },
-  viewProb: {
+  view_prob: {
     type: Sequelize.STRING
   },
-  likeProb: {
+  like_prob: {
     type: Sequelize.STRING
   },
-  replyProb: {
+  reply_prob: {
     type: Sequelize.STRING
   },
-  retweetProb: {
+  retweet_prob: {
     type: Sequelize.STRING
   }
 });

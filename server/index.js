@@ -37,9 +37,9 @@ var pollQueue = () => {
     
               if (type !== 'original') {
                 bulkStorage[type].push(formatMetric(message));
-                db[type](message.MessageAttributes.tweetId.StringValue);
+                db[type](message.MessageAttributes.tweet_id.StringValue);
 
-                if (bulkStorage[type].length === 100) {
+                if (bulkStorage[type].length === 500) {
                   var tweets = bulkStorage['tweet'];
                   var items = bulkStorage[type];
                   bulkStorage['tweets'] = [];

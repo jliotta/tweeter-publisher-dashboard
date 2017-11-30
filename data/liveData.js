@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const grammar = require('./grammar.js');
 const uuidv4 = require('uuid/v4');
 
-const tweetIds = require('./tweets.js')
+const tweet_ids = require('./tweets.js')
 
 AWS.config.loadFromPath('./config.json');
 
@@ -42,13 +42,13 @@ var userGenerator = function() {
 var metricsGenerator = function() {
   const params = {
     MessageAttributes: {
-      userId: {
+      user_id: {
         DataType: 'String',
         StringValue: userGenerator().toString()
       },
-      tweetId: {
+      tweet_id: {
         DataType: 'String',
-        StringValue: '00042b77-dc78-47df-97e3-b10a482586cb'
+        StringValue: randomElement(['002ec921-9672-4627-91e5-626740d5d1dd', '00f935f0-c7ea-4e64-9103-e6cbd6759ddf', '01a34e8c-1c4c-47f4-87ec-c4744230158a'])
       },
       type: {
         DataType: 'String',
@@ -89,12 +89,6 @@ var metricsGenerator = function() {
   });
 }
 
-var count = 0;
-
-while (count < 10000) {
-  metricsGenerator();
-  count++;
-}
-
+setInterval(metricsGenerator, 50);
 
 

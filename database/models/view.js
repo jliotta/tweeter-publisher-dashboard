@@ -2,10 +2,10 @@ const Sequelize = require('sequelize');
 const sequelize = require('../sequelize.js');
 
 const View = sequelize.define('view', {
-  userId: {
+  user_id: {
     type: Sequelize.INTEGER
   },
-  tweetId: {
+  tweet_id: {
     type: Sequelize.STRING
   }
 });

@@ -2,10 +2,10 @@ const Sequelize = require('sequelize');
 const sequelize = require('../sequelize.js');
 
 const Impression = sequelize.define('impression', {
-  userId: {
+  user_id: {
     type: Sequelize.INTEGER
   },
-  tweetId: {
+  tweet_id: {
     type: Sequelize.STRING
   }
 });
